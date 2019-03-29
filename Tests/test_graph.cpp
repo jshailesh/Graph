@@ -1,6 +1,26 @@
 #include "../graph.hpp"
 #include <gtest/gtest.h>
 #include <string>
+#include <algorithm>
+#include <iterator>
+
+class MyGraphTest : public ::testing::Test
+{
+protected:
+  void SetUp() override
+  {    
+  }
+
+  sjha::graph<std::string> my_graph{
+    {"r", {"s", "v"}},
+      {"s", {"r", "w"}},
+	{"t", {"u", "w", "x"}},
+	  {"u", {"t", "x", "y"}},
+	    {"v", {"r"}},
+	      {"w", {"s", "t", "x"}},
+		{"x", {"t", "u", "w"}},
+		  {"y", {"u", "x"}}};
+};
 
 TEST(GraphTest, InitializerList)
 {
@@ -44,28 +64,17 @@ TEST(GraphTest, DefaultGraph)
   my_graph.print();
 }
 
-TEST(GraphTest, BFS)
+TEST_F(MyGraphTest, BFS)
 {
-  sjha::graph<std::string> my_graph{
-    {"r", {"s", "v"}},
-      {"s", {"r", "w"}},
-	{"t", {"u", "w", "x"}},
-	  {"u", {"t", "x", "y"}},
-	    {"v", {"r"}},
-	      {"w", {"s", "t", "x"}},
-		{"x", {"t", "u", "w"}},
-		  {"y", {"u", "x"}}};
-
   my_graph.print();
 
   std::string start_vertex = "s";
   auto bfs_traversal = my_graph.breadth_first_search(start_vertex);
   std::cout << "BFS Traversal WRT Vertex " << start_vertex
-	    << ": ["; 
-  for (const auto &item : bfs_traversal)
-    {
-      std::cout << item << " ";
-    }
+	    << ": [ "; 
+
+  std::copy(bfs_traversal.begin(), bfs_traversal.end(),
+	    std::ostream_iterator<std::string> (std::cout, " "));
   std::cout << "]" << std::endl;
 		
 }
